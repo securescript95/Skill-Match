@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Skill Exchange</title>
+<style>
+:root{--pri:#305cff;--mint:#d4f5e9;--ink:#141a1f;--surf:#f7fafc;--card:#fff;--mut:#59616b;--body:#40454d;--chip:#d6e2ff;--soft:#f2f0f5;--ok:#299478;--line:#e3e8ee;--page:#e8edf3;box-sizing:border-box}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--ink:#f2f5f8;--surf:#10151b;--card:#1a2129;--mut:#9aa5b1;--body:#c3cad2;--chip:#243566;--soft:#27303a;--mint:#1d4a3d;--ok:#5ad3ad;--line:#2b343e;--page:#0a0d11;--pri:#6f8cff}}
+*{box-sizing:border-box;font-family:Inter,system-ui,sans-serif}
+html,body{height:100%;margin:0;background:var(--page);color:var(--ink)}
+body{display:flex;justify-content:center;align-items:center}
+#app{width:390px;max-width:100%;height:min(844px,100%);background:var(--surf);border-radius:32px;overflow:hidden;position:relative;display:flex;flex-direction:column;box-shadow:0 8px 40px #0002}
+@media(max-width:430px){#app{border-radius:0;height:100%}}
+.scr{flex:1;overflow-y:auto;padding:34px 24px 16px;display:flex;flex-direction:column}
+h1{font-size:24px;margin:0 0 6px;font-weight:600}h2{font-size:32px;margin:0;font-weight:700}
+.sub{color:var(--pri);font-size:13px;font-weight:600;margin:0 0 16px}.mut{color:var(--mut);font-size:14px}
+.btn{border:0;border-radius:16px;height:56px;font-size:16px;font-weight:600;background:var(--pri);color:#fff;cursor:pointer;width:100%}
+.btn.sec{background:none;color:var(--mut);height:44px;font-size:14px;font-weight:500}
+.inp{width:100%;height:56px;border-radius:16px;border:1px solid var(--line);background:var(--card);padding:0 16px;font-size:15px;color:var(--ink);margin-bottom:12px}
+label{font-size:12px;color:var(--mut);display:block;margin:10px 0 6px}
+.chip{border:1px solid var(--line);background:var(--card);border-radius:14px;height:42px;padding:0 14px;font-size:14px;font-weight:500;color:var(--ink);cursor:pointer}
+.chip.on{background:var(--chip);border-color:var(--pri);color:var(--pri)}
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0}
+.sp{flex:1}
+.av{border-radius:50%;background:var(--chip);color:var(--pri);display:grid;place-items:center;font-weight:700;flex:none}
+nav{height:78px;background:var(--card);display:flex;justify-content:space-around;align-items:center;border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0)}
+nav button{border:0;background:none;font-size:11px;font-weight:600;color:var(--mut);cursor:pointer;padding:10px 14px}
+nav button.on{color:var(--pri)}
+.deck{position:relative;height:610px;flex:none}
+.card{position:absolute;inset:0;background:var(--card);border-radius:28px;overflow:hidden;touch-action:pan-y;user-select:none;cursor:grab;box-shadow:0 2px 12px #0001}
+.card .pic{height:250px;margin:0 0 20px;background:var(--chip);display:grid;place-items:center;font-size:72px;font-weight:700;color:var(--pri)}
+.card .in{padding:0 24px}.lab{font-size:11px;font-weight:600;color:var(--pri);margin:16px 0 6px}.lab.g{color:var(--ok)}
+.tag{display:inline-block;font-weight:600;font-size:14px;margin-right:12px}
+.stamp{position:absolute;top:24px;font-size:22px;font-weight:800;border:3px solid;border-radius:10px;padding:2px 10px;opacity:0}
+.acts{display:flex;justify-content:center;gap:40px;margin-top:-40px;position:relative}
+.rb{width:60px;height:60px;border-radius:50%;border:0;background:var(--soft);font-size:22px;color:var(--ink);cursor:pointer}.rb.y{background:var(--mint)}
+.box{background:var(--card);border-radius:20px;padding:18px;margin-bottom:16px}
+.row{display:flex;align-items:center;gap:14px}
+.msg{max-width:75%;padding:14px 16px;border-radius:18px;font-size:14px;margin-bottom:10px;background:var(--card)}.msg.me{background:var(--pri);color:#fff;align-self:flex-end}
+.li{display:flex;justify-content:space-between;padding:12px 0;font-size:15px;border-bottom:1px solid var(--line);cursor:pointer}
+.hd{font-size:11px;font-weight:600;color:var(--mut);margin:24px 0 4px;letter-spacing:.04em}
+.back{border:0;background:none;font-size:32px;color:var(--ink);cursor:pointer;line-height:1;padding:0}
+.toast{position:absolute;bottom:96px;left:24px;right:24px;background:var(--ink);color:var(--surf);padding:14px;border-radius:14px;font-size:14px;text-align:center}
+</style></head><body><div id="app"></div>
+<script>
+const P=[
+{n:'Rahul',a:22,c:'Delhi · Online',bio:'Backend developer learning design and photography.',t:['Python','Django'],l:['UI/UX','Figma']},
+{n:'Priya',a:21,c:'Mumbai · Online',bio:'Design student who loves cameras and storytelling.',t:['Photography','Video Editing'],l:['Python','Public Speaking']},
+{n:'Kabir',a:23,c:'Pune · In person',bio:'Final-year CS, plays guitar, wants to build apps.',t:['Guitar','JavaScript'],l:['UI/UX','Photography']},
+{n:'Ananya',a:20,c:'Bangalore · Online',bio:'Debate captain and part-time editor.',t:['Public Speaking','Video Editing'],l:['Python','Figma']}];
+const SK=['Python','UI/UX','Photography','Public Speaking','Video Editing','Guitar','JavaScript','Figma','Excel','Writing'];
+const S={scr:'welcome',i:0,hist:[],teach:['Python','UI/UX'],learn:['Photography'],
+reqs:[{n:'Sarah',w:'Python',t:'UI/UX'},{n:'Arjun',w:'UI/UX',t:'JavaScript'},{n:'Maya',w:'Guitar',t:'Photography'}],
+chats:{Rahul:[['them','What would you like to learn?'],['me','React Hooks and Figma.']],Sarah:[['them','What level are you at?']],Arjun:[['them','I can teach JavaScript too.']],Maya:[['them','Ready for our first session?']]},
+cur:'Rahul',me:{name:'Alex Kumar',user:'alex',bio:'Computer science student interested in backend development and UI design.'},toast:''};
+const $=s=>document.querySelector(s),ini=n=>n[0];
+const TABS=['discover','requests','chats','profile'];
+function nav(){return`<nav>${TABS.map(t=>`<button data-go="${t}" class="${S.scr==t?'on':''}">${t[0].toUpperCase()+t.slice(1)}</button>`).join('')}</nav>`}
+function chips(list,key){return`<div class="chips">${SK.map(s=>`<button class="chip ${S[key].includes(s)?'on':''}" data-chip="${key}:${s}">${s}</button>`).join('')}</div>`}
+const V={
+welcome:()=>`<div class="scr" style="padding-top:90px"><p class="sub" style="font-size:14px;letter-spacing:.1em">SKILL EXCHANGE</p><h2 style="font-size:36px;line-height:1.2">Learn something. Teach something. Connect.</h2><p class="mut" style="margin-top:16px">Exchange skills with people who want to learn what you know.</p><div class="sp"></div><button class="btn" data-go="signup">Get Started</button><button class="btn sec" data-go="login">I already have an account</button></div>`,
+login:()=>`<div class="scr" style="padding-top:80px"><h1 style="font-size:28px">Welcome back</h1><p class="mut" style="margin-bottom:40px">Log in to continue your skill exchange.</p><input class="inp" placeholder="Email / Username"><input class="inp" type="password" placeholder="Password"><p class="mut" style="text-align:right;margin:0 0 30px;font-size:13px">Forgot password?</p><button class="btn" data-go="discover">Log In</button><button class="btn sec" style="margin-top:12px">Continue with Google</button><button class="btn sec">Continue with Apple</button><div class="sp"></div><button class="btn sec" data-go="signup">New here? Create account</button></div>`,
+signup:()=>`<div class="scr" style="padding-top:50px"><p class="mut">2 of 6</p><h1 style="font-size:26px">Tell us about you</h1><div class="av" style="width:112px;height:112px;margin:24px auto 8px;font-size:36px">${ini(S.me.name)}</div><p class="mut" style="text-align:center;font-size:13px;margin:0 0 24px">Add photo</p><input class="inp" id="nm" placeholder="Name" value="${S.me.name}"><input class="inp" id="un" placeholder="Username" value="${S.me.user}"><input class="inp" id="bi" maxlength="160" placeholder="Short bio" value="${S.me.bio}"><div class="sp"></div><button class="btn" data-go="teach">Continue</button></div>`,
+teach:()=>`<div class="scr" style="padding-top:50px"><p class="mut">3 of 6</p><h1 style="font-size:26px">What can you teach?</h1><p class="mut" style="margin:0">Add skills you're comfortable sharing with others.</p>${chips(SK,'teach')}<div class="sp"></div><button class="btn" data-go="learn">Continue</button></div>`,
+learn:()=>`<div class="scr" style="padding-top:50px"><p class="mut">4 of 6</p><h1 style="font-size:26px">What do you want to learn?</h1><p class="mut" style="margin:0">Pick skills you'd love to pick up.</p>${chips(SK,'learn')}<div class="sp"></div><button class="btn" data-go="discover">Continue</button></div>`,
+discover:()=>{const p=P[S.i%P.length];return`<div class="scr"><h1>Discover</h1><p class="sub">Good skill match</p><div class="deck"><div class="card" id="card"><div class="stamp" id="sy" style="left:24px;color:var(--ok)">LEARN</div><div class="stamp" id="sn" style="right:24px;color:#d33">PASS</div><div class="pic">${ini(p.n)}</div><div class="in"><h1 style="font-size:24px;margin:0">${p.n}, ${p.a}</h1><p class="mut" style="margin:4px 0 12px">${p.c}</p><p style="font-size:14px;color:var(--body);margin:0">${p.bio}</p><div class="lab">CAN TEACH</div>${p.t.map(x=>`<span class="tag">${x}</span>`).join('')}<div class="lab g">WANTS TO LEARN</div>${p.l.map(x=>`<span class="tag">${x}</span>`).join('')}<p class="mut" style="font-size:12px;margin-top:22px">You teach ${p.l[0]} ↔ They teach ${p.t[0]}</p></div></div></div><div class="acts"><button class="rb" data-act="no">×</button><button class="rb" data-act="undo">↺</button><button class="rb y" data-act="yes">✓</button></div></div>${nav()}`},
+requests:()=>`<div class="scr"><h1>Requests</h1><p class="mut" style="margin:0 0 20px;font-size:13px">${S.reqs.length} people want to exchange skills with you</p>${S.reqs.length?S.reqs.map((r,k)=>`<div class="box"><div class="row"><div class="av" style="width:56px;height:56px">${ini(r.n)}</div><div><b>${r.n}</b><div class="mut" style="font-size:13px">Wants ${r.w}</div><div class="mut" style="font-size:13px">Can teach ${r.t}</div></div></div><div style="display:flex;justify-content:space-between;margin-top:18px;padding:0 10px"><button class="btn sec" style="width:auto" data-rej="${k}">Reject</button><button class="btn sec" style="width:auto;color:var(--pri);font-weight:600" data-acc="${k}">Accept</button></div></div>`).join(''):'<p class="mut">All caught up. Keep swiping in Discover to find more people.</p>'}</div>${nav()}`,
+chats:()=>`<div class="scr"><h1>Chats</h1><input class="inp" style="height:48px;margin:12px 0 16px" placeholder="⌕ Search conversations" id="q">${Object.keys(S.chats).map(n=>{const m=S.chats[n].slice(-1)[0];return`<div class="row" style="padding:12px 0;cursor:pointer" data-chat="${n}"><div class="av" style="width:52px;height:52px">${ini(n)}</div><div><b>${n}</b><div class="mut" style="font-size:13px">${m?m[1]:''}</div></div></div>`}).join('')}</div>${nav()}`,
+chat:()=>`<div style="padding:30px 24px 12px;display:flex;align-items:center;gap:14px"><button class="back" data-go="chats">‹</button><div><b>${S.cur}</b><div class="mut" style="font-size:12px">Online</div></div><div class="sp"></div><button class="chip" style="height:36px;font-size:13px" data-go="schedule">Schedule</button></div><div class="scr" style="padding-top:10px" id="msgs">${S.chats[S.cur].map(m=>`<div class="msg ${m[0]}">${m[1]}</div>`).join('')}<p class="mut" style="font-size:12px;margin:14px 0 6px">Start your skill exchange</p>${['What level are you currently at?','What should we cover first?','When are you available?'].map(q=>`<button class="chip" style="text-align:left;margin-bottom:10px;width:100%" data-q="${q}">${q}</button>`).join('')}</div><form id="f" style="display:flex;gap:10px;padding:12px 24px 24px"><input class="inp" style="margin:0;height:54px" id="mi" placeholder="Type a message..." autocomplete="off"><button class="rb y" style="flex:none" title="Send">➤</button></form>`,
+match:()=>{const p=P[(S.i-1+P.length)%P.length];return`<div class="scr" style="align-items:center;text-align:center;padding-top:110px"><h2 style="font-size:30px">It's a match!</h2><p class="mut">You found a potential skill-exchange partner.</p><div class="row" style="margin:50px 0 24px;gap:40px"><div class="av" style="width:92px;height:92px;font-size:32px">${ini(S.me.name)}</div><div class="av" style="width:92px;height:92px;font-size:32px">${ini(p.n)}</div></div><b style="font-size:18px">You ↔ ${p.n}</b><p style="margin:20px 0;font-weight:600">${p.l[0]} &nbsp;↕&nbsp; ${p.t[0]}</p><div class="sp"></div><button class="btn" data-open="${p.n}">Start chatting</button><button class="btn sec" data-go="discover">Maybe later</button></div>`},
+schedule:()=>`<div class="scr"><div class="row" style="margin-bottom:6px"><button class="back" data-go="chat">‹</button><h1 style="margin:0">Schedule exchange</h1></div><p class="mut" style="margin:0 0 6px;font-size:13px">${S.cur} · Skill exchange</p><label>Skill / topic</label><input class="inp" value="React Hooks"><label>Date</label><input class="inp" type="date" id="dt"><label>Time</label><input class="inp" type="time" value="19:00"><label>Duration</label><select class="inp"><option>30 minutes</option><option selected>60 minutes</option><option>90 minutes</option></select><label>Format</label><select class="inp"><option>Online</option><option>In person</option></select><div class="sp"></div><button class="btn" data-send="1">Send session request</button></div>`,
+profile:()=>`<div class="scr" style="align-items:center;padding-top:44px"><div class="av" style="width:96px;height:96px;font-size:34px">${ini(S.me.name)}</div><h1 style="margin:16px 0 4px">${S.me.name}</h1><p class="mut" style="margin:0;font-size:13px">@${S.me.user} · Delhi · English, Hindi</p><p style="font-size:14px;color:var(--body);text-align:center;margin:18px 0">${S.me.bio}</p><div style="width:100%"><div class="lab">SKILLS I TEACH</div><b style="font-size:15px">${S.teach.join(' • ')||'—'}</b><div class="lab g" style="margin-top:22px">SKILLS I WANT TO LEARN</div><b style="font-size:15px">${S.learn.join(' • ')||'—'}</b><div class="lab" style="margin-top:22px;color:var(--mut)">AVAILABILITY</div><b style="font-size:15px">Mon–Fri · Evenings · Online</b><p class="mut" style="font-size:13px;margin-top:26px">12 exchanges · 9 skills taught · 7 learned</p></div><div class="sp"></div><button class="btn" style="background:var(--soft);color:var(--ink)" data-go="teach">Edit profile</button><button class="btn sec" data-go="settings">Settings</button></div>${nav()}`,
+settings:()=>{const g=(h,a)=>`<div class="hd">${h}</div>`+a.map(x=>`<div class="li" data-t="${x}"><span>${x}</span><span class="mut">›</span></div>`).join('');return`<div class="scr"><div class="row"><button class="back" data-go="profile">‹</button><h1 style="margin:0">Settings</h1></div>${g('ACCOUNT',['Edit profile','Email & password','Connected accounts'])}${g('PREFERENCES',['Discovery preferences','Location & languages','Availability'])}${g('NOTIFICATIONS',['Requests','Matches & messages','Session reminders'])}${g('PRIVACY & SAFETY',['Blocked users','Report history','Profile visibility'])}<button class="btn sec" style="margin-top:20px" data-go="welcome">Log out</button></div>`}
+};
+function toast(t){S.toast=t;draw();setTimeout(()=>{S.toast='';draw()},1800)}
+function draw(){$('#app').innerHTML=V[S.scr]()+(S.toast?`<div class="toast">${S.toast}</div>`:'');wire()}
+function go(s){S.scr=s;draw()}
+function decide(yes){const c=$('#card');if(!c)return;const p=P[S.i%P.length];c.style.transition='transform .3s';c.style.transform=`translateX(${yes?500:-500}px) rotate(${yes?25:-25}deg)`;S.hist.push(S.i);setTimeout(()=>{S.i++;if(yes){if(!S.chats[p.n])S.chats[p.n]=[['them','Hey! Excited to swap skills.']];go('match')}else draw()},280)}
+function wire(){
+const c=$('#card');
+if(c){let x0=null,dx=0;c.onpointerdown=e=>{x0=e.clientX;c.setPointerCapture(e.pointerId);c.style.transition='none'};
+c.onpointermove=e=>{if(x0==null)return;dx=e.clientX-x0;c.style.transform=`translateX(${dx}px) rotate(${dx/20}deg)`;$('#sy').style.opacity=Math.max(0,dx/100);$('#sn').style.opacity=Math.max(0,-dx/100)};
+c.onpointerup=()=>{if(x0==null)return;x0=null;if(Math.abs(dx)>90)decide(dx>0);else{c.style.transition='transform .2s';c.style.transform='';$('#sy').style.opacity=$('#sn').style.opacity=0}dx=0}}
+const f=$('#f');if(f)f.onsubmit=e=>{e.preventDefault();const v=$('#mi').value.trim();if(v)send(v)};
+const m=$('#msgs');if(m)m.scrollTop=m.scrollHeight;
+}
+function send(v){S.chats[S.cur].push(['me',v]);draw();setTimeout(()=>{S.chats[S.cur].push(['them','Sounds good! Saturday works.']);if(S.scr=='chat')draw()},1200)}
+document.addEventListener('click',e=>{const t=e.target.closest('button,[data-chat],[data-t]');if(!t)return;const d=t.dataset;
+if(S.scr=='signup'&&d.go){S.me.name=$('#nm').value||S.me.name;S.me.user=$('#un').value||S.me.user;S.me.bio=$('#bi').value}
+if(d.chip){const[k,s]=d.chip.split(':');const a=S[k];a.includes(s)?a.splice(a.indexOf(s),1):a.push(s);draw();return}
+if(d.act){d.act=='undo'?(S.hist.length?(S.i=S.hist.pop(),draw()):toast('Nothing to undo')):decide(d.act=='yes');return}
+if(d.rej!=null){S.reqs.splice(+d.rej,1);draw();return}
+if(d.acc!=null){const r=S.reqs.splice(+d.acc,1)[0];S.chats[r.n]=S.chats[r.n]||[['them','Thanks for accepting!']];toast('Accepted. Chat with '+r.n);return}
+if(d.chat||d.open){S.cur=d.chat||d.open;go('chat');return}
+if(d.q){send(d.q);return}
+if(d.send){S.scr='chat';S.chats[S.cur].push(['me','Session request sent: Saturday 7:00 PM, 60 min, Online']);draw();return}
+if(d.t){toast(d.t+' (coming soon)');return}
+if(d.go)go(d.go)});
+draw();
+</script></body></html>
